@@ -6,3 +6,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY app.py .
 EXPOSE 5000
 CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT} app:app"]
+ - name: Deploy to Render
+        if: github.ref == 'refs/heads/main'
+        env:
+          RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: curl -fsS -X POST "$RENDER_DEPLOY_HOOK_URL"
