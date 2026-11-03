@@ -64,5 +64,10 @@ jobs:
       - name: Deploy to Render
         if: github.ref == 'refs/heads/main'
         env:
-          deploy_url: ${{ secrets.RENDER_DEPLOY_HOOK }}
-        run: curl --fail --show-error --silent "$deploy_url"
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK" ]; then
+            echo "Render deploy hook is missing"
+            exit 1
+          fi
+          curl --fail --show-error --silent "$RENDER_DEPLOY_HOOK"
