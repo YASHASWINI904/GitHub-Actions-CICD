@@ -61,13 +61,35 @@ jobs:
           fi
           curl --fail --show-error --silent --request POST "$RENDER_DEPLOY_HOOK"
           echo "Render deployment trigger sent.
-  - name: Deploy to Render
-  env:
-    RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
-  run: |
-    if [ -z "$RENDER_DEPLOY_HOOK" ]; then
-      echo "RENDER_DEPLOY_HOOK is missing"
-      exit 1
-    fi
 
-    curl -fsS -X POST "$RENDER_DEPLOY_HOOK"
+name: Deploy to Render
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to Render
+        env:
+          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK" ]; then
+            echo "ERROR: Render deploy hook is missing"
+            exit 1
+          fi
+
+          curl --fail --silent --show-error \
+            --request POST \
+            "$RENDER_DEPLOY_HOOK"
+
+          echo "Render deployment request sent successfully."
+
