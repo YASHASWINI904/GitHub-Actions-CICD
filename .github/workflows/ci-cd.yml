@@ -78,18 +78,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Deploy to Render
-        env:
-          RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK }}
-        run: |
-          if [ -z "$RENDER_DEPLOY_HOOK" ]; then
-            echo "ERROR: Render deploy hook is missing"
-            exit 1
-          fi
-
-          curl --fail --silent --show-error \
-            --request POST \
-            "$RENDER_DEPLOY_HOOK"
-
-          echo "Render deployment request sent successfully."
+     
+        
 
